@@ -1,0 +1,74 @@
+:root {
+    --color-primary: #8a0e0e;
+    --color-bg: #222222;
+    --color-text: #f5f5f5;
+    --color-accent: #d4af37;
+    --font-base: 'Helvetica', sans-serif;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-base);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header, footer {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(0,0,0,0.3);
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    max-width: 1024px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.scene {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.scene.active {
+    display: block;
+}
+
+.grid-container {
+    display: grid;
+    gap: 15px;
+    padding: 10px;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+button {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
