@@ -1,3 +1,5 @@
+import { formatearPrecio } from '../utils/utils.js';
+
 /**
  * Clase que representa un ítem del mercado.
  */
@@ -9,7 +11,7 @@ export class Producto {
      * @param {number} price - Precio base.
      * @param {string} rarity - Rareza (Común, Rara, Épica).
      * @param {string} type - Tipo (arma, armadura, consumible).
-     * @param {Object} bonus - Objeto con stats { ataque: X, defensa: Y, vida: Z }.
+     * @param {number} bonus - Valor numérico que suma a la estadística.
      */
     constructor(name, image, price, rarity, type, bonus) {
         this.nombre = name;
@@ -21,11 +23,11 @@ export class Producto {
     }
 
     /**
-     * Formatea el precio (ej: 950 -> 9,50€).
-     * @returns {string} Precio formateado.
+     * Devuelve el precio formateado.
+     * @returns {string} Precio en euros.
      */
-    formatPrice() {
-        return `${(this.precio / 100).toFixed(2).replace('.', ',')}€`;
+    obtenerPrecioFormateado() {
+        return formatearPrecio(this.precio);
     }
 
     /**
@@ -33,7 +35,7 @@ export class Producto {
      * @param {number} percent - Porcentaje (0-100).
      * @returns {Producto} Nueva instancia con precio reducido.
      */
-    applyDiscount(percent) {
+    aplicarDescuento(percent) {
         const newPrice = this.precio - (this.precio * (percent / 100));
         return new Producto(
             this.nombre, 

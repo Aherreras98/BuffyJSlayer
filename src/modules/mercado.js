@@ -1,12 +1,48 @@
-import { Producto } from './Producto.js';
-import { RARITY, TYPE } from '../../constants.js'; 
+import { Producto } from './producto.js';
+import { RAREZA, TIPO } from '../../constants.js';
 
-export const mercado = [
-    new Producto('Estaca Mr. Pointy', 'src/img/stake.png', 5000, RARITY.COMMON, TYPE.WEAPON, { ataque: 10 }),
-    new Producto('Hacha de Giles', 'src/img/axe.png', 12000, RARITY.RARE, TYPE.WEAPON, { ataque: 25 }),
-    new Producto('Guadaña Mística', 'src/img/scythe.png', 50000, RARITY.EPIC, TYPE.WEAPON, { ataque: 60 }),
-    new Producto('Chaqueta de Cuero', 'src/img/jacket.png', 8000, RARITY.COMMON, TYPE.ARMOR, { defensa: 15 }),
-    new Producto('Cruz de Plata', 'src/img/cross.png', 15000, RARITY.RARE, TYPE.ARMOR, { defensa: 35 }),
-    new Producto('Agua Bendita', 'src/img/water.png', 4000, RARITY.COMMON, TYPE.CONSUMABLE, { vida: 30 }),
-    new Producto('Hechizo de Willow', 'src/img/spell.png', 10000, RARITY.EPIC, TYPE.CONSUMABLE, { vida: 100 })
-];
+export class Mercado {
+    constructor() {
+        this.productos = [
+            new Producto('Estaca', 'src/img/estaca.png', 5000, RAREZA.COMUN, TIPO.ARMA, 10),
+            new Producto('Ballesta', 'src/img/ballesta.png', 12000, RAREZA.RARA, TIPO.ARMA, 25),
+            new Producto('Hacha', 'src/img/hacha.png', 42000, RAREZA.LEGENDARIA, TIPO.ARMA, 45),
+            new Producto('Chaqueta', 'src/img/chaqueta.png', 8000, RAREZA.COMUN, TIPO.ARMADURA, 15),
+            new Producto('Amuleto', 'src/img/amuleto.png', 15000, RAREZA.LEGENDARIA, TIPO.ARMADURA, 30),
+            new Producto('Vendas', 'src/img/vendas.png', 4000, RAREZA.COMUN, TIPO.CONSUMIBLE, 20),
+            new Producto('Agua Bendita', 'src/img/agua.png', 9000, RAREZA.RARA, TIPO.CONSUMIBLE, 35)
+        ];
+    }
+
+    /**
+     * Filtra productos por rareza.
+     * @param {string} rareza 
+     * @returns {Producto[]}
+     */
+    filtrarPorRareza(rareza) {
+        return this.productos.filter(producto => producto.rareza === rareza);
+    }
+
+    /**
+     * Busca un producto por nombre.
+     * @param {string} nombre 
+     * @returns {Producto|undefined}
+     */
+    buscarProducto(nombre) {
+        return this.productos.find(producto => producto.nombre === nombre);
+    }
+
+    /**
+     * Aplica descuento a una rareza específica.
+     * @param {string} rareza 
+     * @param {number} porcentaje 
+     */
+    aplicarOferta(rareza, porcentaje) {
+        this.productos = this.productos.map(producto => {
+            if (producto.rareza === rareza) {
+                return producto.aplicarDescuento(porcentaje);
+            }
+            return producto;
+        });
+    }
+}

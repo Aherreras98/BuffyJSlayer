@@ -1,11 +1,11 @@
-export const RARITY = {
-    COMMON: 'Común',
-    RARE: 'Rara',
-    EPIC: 'Épica'
+export const RAREZA = {
+    COMUN: 'Común',
+    RARA: 'Rara',
+    LEGENDARIA: 'Legendaria'
 };
 
-export const TYPE = {
-    WEAPON: 'arma',
-    ARMOR: 'armadura',
-    CONSUMABLE: 'consumible'
+export const TIPO = {
+    ARMA: 'Arma',
+    ARMADURA: 'Armadura',
+    CONSUMIBLE: 'Consumible'
 };
