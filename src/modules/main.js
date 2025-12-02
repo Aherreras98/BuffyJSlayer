@@ -2,9 +2,11 @@ import { Jugador } from './jugador.js';
 import { Mercado } from './mercado.js';
 import { Enemigo, Jefe } from './enemigo.js';
 import { RAREZA } from '../../constants.js';
+import { combatir } from './batalla.js';
 
 const jugador = new Jugador("Buffy", "src/img/buffy.png");
 const mercado = new Mercado();
+let indiceBatalla = 0;
 
 const enemigos = [
     new Enemigo("Spike", "src/img/spike.png", 10, 50),
@@ -134,6 +136,71 @@ function configurarNavegacion() {
             if (idDestino === 'scene-4') {
                 pintarEnemigos();
             }
+
+            if (idDestino === 'scene-5') {
+                prepararBatalla();
+            }
         });
     });
+}
+
+function prepararBatalla() {
+    if (indiceBatalla >= enemigos.length) {
+        finJuego();
+        return;
+    }
+
+    const enemigo = enemigos[indiceBatalla];
+    const arena = document.querySelector('.battle-arena');
+    const resultadoTexto = document.getElementById('battle-result');
+    const btnNext = document.getElementById('btn-next-battle');
+
+    btnNext.style.display = 'none';
+    resultadoTexto.innerHTML = '¡Luchando...!';
+
+    arena.innerHTML = `
+        <div class="lado-jugador">
+            <h3>${jugador.nombre}</h3>
+            <p>HP: ${jugador.vidaActual}</p>
+        </div>
+        <div class="lado-enemigo">
+            <h3>${enemigo.nombre}</h3>
+            <p>HP: ${enemigo.vida}</p>
+            <p><small>ATQ: ${enemigo instanceof Jefe ? (enemigo.ataque * enemigo.multiplicador).toFixed(0) : enemigo.ataque}</small></p>
+        </div>
+    `;
+
+    setTimeout(() => {
+        const resultado = combatir(jugador, enemigo);
+        
+        if (resultado.ganador === jugador) {
+            jugador.sumarPuntos(resultado.puntos);
+            resultadoTexto.innerHTML = `<span style="color:green">¡Victoria! +${resultado.puntos} pts</span>`;
+        } else {
+            resultadoTexto.innerHTML = `<span style="color:red">Derrota... Te has quedado sin fuerzas.</span>`;
+        }
+
+        arena.querySelector('.lado-jugador p').innerText = `HP: ${jugador.vidaActual}`;
+
+        btnNext.style.display = 'block';
+
+        btnNext.onclick = () => {
+            indiceBatalla++;
+
+            const s5 = document.getElementById('scene-5');
+            s5.classList.remove('active');
+            void s5.offsetWidth;
+            s5.classList.add('active');
+            
+            prepararBatalla();
+        };
+
+    }, 1000);
+}
+
+function finJuego() {
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    document.getElementById('scene-6').classList.add('active');
+
+    document.getElementById('final-rank').innerText = `Puntos Finales: ${jugador.puntos}`;
 }
