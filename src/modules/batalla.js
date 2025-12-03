@@ -31,17 +31,18 @@ export function combatir(jugador, enemigo) {
         vidaEnemigo -= ataqueJugador;
     }
 
-    const victoria = jugador.vidaActual > 0;
+const victoria = jugador.vidaActual > 0;
     let puntosGanados = 0;
 
     if (victoria) {
-        puntosGanados = Math.round(100 + enemigo.ataque);
+        let basePuntos = 100 + enemigo.ataque;
+
+        if (enemigo instanceof Jefe) {
+            puntosGanados = Math.round(basePuntos * enemigo.multiplicador);
+        } else {
+            puntosGanados = Math.round(basePuntos);
+        }
     } else {
         jugador.vidaActual = 0;
     }
-
-    return {
-        ganador: victoria ? jugador : enemigo,
-        puntos: puntosGanados
-    };
 }

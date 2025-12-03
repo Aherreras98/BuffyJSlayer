@@ -6,6 +6,7 @@ import { combatir } from './batalla.js';
 import { obtenerRango } from './ranking.js';
 
 const jugador = new Jugador("Buffy", "src/img/buffy.png");
+
 const mercado = new Mercado();
 
 const enemigos = [
@@ -13,8 +14,13 @@ const enemigos = [
     new Enemigo("Demonio", "src/img/demon.png", 20, 80),
     new Jefe("Willow Oscura", "src/img/willow.png", 35, 150, 1.5)
 ];
+
 let indiceBatalla = 0;
 
+/**
+ * Inicializa la lógica principal del juego al cargar el DOM.
+ * Aplica ofertas aleatorias y configura los eventos iniciales.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     const rarezas = Object.values(RAREZA);
     const azar = rarezas[Math.floor(Math.random() * rarezas.length)];
@@ -26,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarBotonBatalla(); 
 });
 
+/**
+ * Actualiza la interfaz del perfil del jugador (Escena 1).
+ * Crea el elemento HTML si no existe o actualiza sus valores.
+ * @returns {void}
+ */
 function actualizarPerfil() {
     const contenedor = document.querySelector('#scene-1');
     let infoDiv = document.getElementById('player-info-card');
@@ -62,6 +73,11 @@ function actualizarPerfil() {
     `;
 }
 
+/**
+ * Renderiza la cuadrícula de productos del mercado (Escena 2).
+ * Gestiona la lógica de botones "Añadir" y "Retirar" y sus eventos.
+ * @returns {void}
+ */
 function pintarMercado() {
     const grid = document.getElementById('market-grid');
     grid.innerHTML = '';
@@ -109,6 +125,10 @@ function pintarMercado() {
     });
 }
 
+/**
+ * Muestra el inventario pequeño de 5 slots en la parte inferior (Escena 2).
+ * @returns {void}
+ */
 function actualizarInventario() {
     const container = document.getElementById('inventory-grid');
     if (!container) return;
@@ -126,6 +146,11 @@ function actualizarInventario() {
     }
 }
 
+/**
+ * Renderiza el inventario completo y calcula estadísticas finales (Escena 3).
+ * Actualiza los elementos DOM de ataque, defensa y vida total.
+ * @returns {void}
+ */
 function pintarInventario() {
     const grid = document.getElementById('full-inventory-grid');
     if (!grid) return;
@@ -149,6 +174,11 @@ function pintarInventario() {
     document.getElementById('final-hp').textContent = jugador.vidaActual;
 }
 
+/**
+ * Genera las tarjetas de los enemigos disponibles (Escena 4).
+ * Diferencia visualmente si el enemigo es un Jefe.
+ * @returns {void}
+ */
 function pintarEnemigos() {
     const grid = document.getElementById('enemies-grid');
     grid.innerHTML = '';
@@ -172,6 +202,11 @@ function pintarEnemigos() {
     });
 }
 
+/**
+ * Configura los eventos de clic en los botones de navegación.
+ * Gestiona el cambio de escenas y actualizaciones de interfaz.
+ * @returns {void}
+ */
 function configurarNavegacion() {
     document.querySelectorAll('.btn-next').forEach(boton => {
         if (!boton.hasAttribute('data-to')) return;
@@ -201,6 +236,10 @@ function configurarNavegacion() {
     });
 }
 
+/**
+ * Añade funcionalidad al botón para avanzar al siguiente combate.
+ * @returns {void}
+ */
 function configurarBotonBatalla() {
     const btnNext = document.getElementById('btn-next-battle');
     if (btnNext) {
@@ -211,11 +250,22 @@ function configurarBotonBatalla() {
     }
 }
 
+/**
+ * Muestra una escena específica y oculta las demás.
+ * @param {string} id - ID del elemento HTML de la escena.
+ * @returns {void}
+ */
 function mostrarEscena(id) {
     document.querySelectorAll('.scene').forEach(sc => sc.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
 
+/**
+ * Gestiona la lógica de un turno de batalla y su visualización (Escena 5).
+ * Llama a la función 'combatir' importada y actualiza el DOM con el resultado.
+ * Si es el último enemigo, llama a finJuego().
+ * @returns {void}
+ */
 function prepararBatalla() {
     if (indiceBatalla >= enemigos.length) {
         finJuego();
@@ -269,6 +319,11 @@ function prepararBatalla() {
     }, 1500);
 }
 
+/**
+ * Muestra la pantalla final con el rango obtenido (Escena 6).
+ * Lanza confeti si el jugador ha ganado.
+ * @returns {void}
+ */
 function finJuego() {
     mostrarEscena('scene-6');
     const rango = obtenerRango(jugador.puntos);
