@@ -12,17 +12,17 @@ export function combatir(jugador, enemigo) {
     }
 
     let vidaEnemigo = enemigo.vida;
-    const defensaJugador = jugador.obtenerDefensaTotal(); 
+    const defensaJugador = jugador.obtenerDefensaTotal();
     const ataqueJugador = jugador.obtenerAtaqueTotal();
 
     let ataqueEnemigo = enemigo.ataque;
-    
+
     if (enemigo instanceof Jefe) {
         ataqueEnemigo = ataqueEnemigo * enemigo.multiplicador;
     }
 
     while (jugador.vidaActual > 0 && vidaEnemigo > 0) {
-        
+
         let danoRecibido = ataqueEnemigo - defensaJugador;
         if (danoRecibido < 0) danoRecibido = 0;
 
@@ -31,7 +31,7 @@ export function combatir(jugador, enemigo) {
         vidaEnemigo -= ataqueJugador;
     }
 
-const victoria = jugador.vidaActual > 0;
+    const victoria = jugador.vidaActual > 0;
     let puntosGanados = 0;
 
     if (victoria) {
@@ -45,4 +45,9 @@ const victoria = jugador.vidaActual > 0;
     } else {
         jugador.vidaActual = 0;
     }
+    
+    return {
+        ganador: victoria ? jugador : enemigo,
+        puntos: puntosGanados
+    };
 }
