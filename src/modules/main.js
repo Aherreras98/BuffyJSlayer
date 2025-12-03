@@ -3,20 +3,19 @@ import { Mercado } from './mercado.js';
 import { Enemigo, Jefe } from './enemigo.js';
 import { RAREZA } from '../../constants.js';
 import { combatir } from './batalla.js';
+import { obtenerRango } from './ranking.js';
 
 const jugador = new Jugador("Buffy", "src/img/buffy.png");
 const mercado = new Mercado();
-let indiceBatalla = 0;
 
 const enemigos = [
     new Enemigo("Spike", "src/img/spike.png", 10, 50),
-    new Enemigo("Demonio Venganza", "src/img/demonio.png", 20, 80),
-    new Jefe("Willow Oscura", "src/img/willow.png", 35, 150)
+    new Enemigo("Demonio", "src/img/demon.png", 20, 80),
+    new Jefe("Willow Oscura", "src/img/willow.png", 35, 150, 1.5)
 ];
+let indiceBatalla = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Sistema cargado. Enemigos añadidos.");
-    
     const rarezas = Object.values(RAREZA);
     const azar = rarezas[Math.floor(Math.random() * rarezas.length)];
     mercado.aplicarOferta(azar, 20); 
@@ -24,124 +23,197 @@ document.addEventListener('DOMContentLoaded', () => {
     actualizarPerfil();
     pintarMercado();
     configurarNavegacion();
+    configurarBotonBatalla(); 
 });
 
 function actualizarPerfil() {
     const contenedor = document.querySelector('#scene-1');
-
     let infoDiv = document.getElementById('player-info-card');
+    
     if (!infoDiv) {
         infoDiv = document.createElement('div');
         infoDiv.id = 'player-info-card';
         infoDiv.className = 'card';
-        const btn = contenedor.querySelector('.btn-next');
-        contenedor.insertBefore(infoDiv, btn);
+        contenedor.insertBefore(infoDiv, contenedor.querySelector('.btn-next'));
     }
 
     infoDiv.innerHTML = `
-        <h3>${jugador.nombre}</h3>
-        <p>Vida: ${jugador.vidaBase}</p>
-        <p>Puntos: ${jugador.puntos}</p>
-        <p><small>Objetos: ${jugador.inventario.length}</small></p>
+        <h3 class="profile-name">${jugador.nombre}</h3>
+        <img src="${jugador.avatar}" alt="${jugador.nombre}" class="profile-avatar">
+        
+        <div class="stats-grid-4">
+            <div class="stat-box">
+                <span class="stat-icon">❤️</span>
+                <p class="stat-value">Vida: ${jugador.vidaBase}</p>
+            </div>
+            <div class="stat-box">
+                <span class="stat-icon">⚔️</span>
+                <p class="stat-value">ATQ: ${jugador.obtenerAtaqueTotal()}</p>
+            </div>
+            <div class="stat-box">
+                <span class="stat-icon">🛡️</span>
+                <p class="stat-value">DEF: ${jugador.obtenerDefensaTotal()}</p>
+            </div>
+            <div class="stat-box">
+                <span class="stat-icon">⭐</span>
+                <p class="stat-value">Pts: ${jugador.puntos}</p>
+            </div>
+        </div>
     `;
 }
 
 function pintarMercado() {
     const grid = document.getElementById('market-grid');
     grid.innerHTML = '';
+    
+    actualizarInventario();
 
     mercado.productos.forEach(prod => {
         const card = document.createElement('div');
         card.className = 'card';
         
+        const enInventario = jugador.inventario.some(i => i.nombre === prod.nombre);
+        if (enInventario) card.classList.add('bought');
+        
         card.innerHTML = `
+            <img src="${prod.imagen}" alt="${prod.nombre}">
             <h3>${prod.nombre}</h3>
-            <p>Tipo: ${prod.tipo}</p>
-            <p>Rareza: ${prod.rareza}</p>
-            <p class="price">${prod.obtenerPrecioFormateado()}</p>
-            <button class="btn-shop">Añadir</button>
+            <p>${prod.rareza} | ${prod.tipo}</p> <p class="price">${prod.obtenerPrecioFormateado()}</p> <button class="btn-shop">${enInventario ? "Retirar" : "Añadir"}</button>
         `;
 
         const btn = card.querySelector('.btn-shop');
-
         btn.addEventListener('click', () => {
             if (btn.textContent === "Añadir") {
+                if (jugador.inventario.length >= 5) {
+                    alert("¡Mochila llena! Máximo 5 objetos.");
+                    return;
+                }
                 jugador.anadirItem(prod);
+                btn.classList.add('btn-animado');
+                setTimeout(() => btn.classList.remove('btn-animado'), 500);
                 
                 card.classList.add('bought'); 
                 btn.textContent = "Retirar";
-                console.log("Comprado:", prod.nombre);
             } else {
                 const index = jugador.inventario.findIndex(i => i.nombre === prod.nombre);
                 if (index > -1) {
                     jugador.inventario.splice(index, 1);
                 }
-
                 card.classList.remove('bought');
                 btn.textContent = "Añadir";
-                console.log("Retirado:", prod.nombre);
             }
+            actualizarInventario();
             actualizarPerfil();
         });
-
         grid.appendChild(card);
     });
 }
 
+function actualizarInventario() {
+    const container = document.getElementById('inventory-grid');
+    if (!container) return;
+    container.innerHTML = '';
+
+    for (let i = 0; i < 5; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'inventory-slot';
+        
+        if (jugador.inventario[i]) {
+            slot.classList.add('filled');
+            slot.innerHTML = `<img src="${jugador.inventario[i].imagen}" alt="item">`;
+        }
+        container.appendChild(slot);
+    }
+}
+
+function pintarInventario() {
+    const grid = document.getElementById('full-inventory-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    
+    jugador.inventario.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+            <img src="${item.imagen}" alt="${item.nombre}">
+            <h3>${item.nombre}</h3>
+            <p>${item.rareza}</p>
+            <small>${item.tipo}</small>
+        `;
+        grid.appendChild(div);
+    });
+    
+    document.getElementById('final-atk').textContent = jugador.obtenerAtaqueTotal();
+    document.getElementById('final-def').textContent = jugador.obtenerDefensaTotal();
+    document.getElementById('final-hp').textContent = jugador.vidaActual;
+}
+
 function pintarEnemigos() {
     const grid = document.getElementById('enemies-grid');
-    grid.innerHTML = ''; // Limpiar
-
+    grid.innerHTML = '';
+    
     enemigos.forEach(enemigo => {
         const card = document.createElement('div');
         card.className = 'card';
         
-        let estiloExtra = '';
-        let etiqueta = '';
+        if (enemigo instanceof Jefe) {
+            card.classList.add('is-boss');
+        }
         
-        if (enemigo instanceof Jefe) {
-            estiloExtra = 'border-color: #d4af37; border-width: 3px;';
-            etiqueta = '<br><strong style="color: #d4af37">¡JEFE FINAL!</strong>';
-        }
-
-        card.style.cssText = estiloExtra;
-
+        let extra = enemigo instanceof Jefe ? `<br><span class="boss-label">JEFE FINAL</span>` : '';
+        
         card.innerHTML = `
-            <h3>${enemigo.nombre}</h3>
-            ${etiqueta}
-            <p>⚔️ Ataque: ${enemigo.ataque}</p>
-            <p>❤️ Vida: ${enemigo.vida}</p>
+            <img src="${enemigo.imagen}" alt="${enemigo.nombre}">
+            <h3>${enemigo.nombre}</h3>${extra}
+            <p>ATQ: ${enemigo.ataque} | HP: ${enemigo.vida}</p>
         `;
-
-        if (enemigo instanceof Jefe) {
-            card.innerHTML += `<p><small>Multiplicador de daño: x${enemigo.multiplicador}</small></p>`;
-        }
-
         grid.appendChild(card);
     });
 }
 
 function configurarNavegacion() {
     document.querySelectorAll('.btn-next').forEach(boton => {
+        if (!boton.hasAttribute('data-to')) return;
+
         boton.addEventListener('click', (e) => {
             const idDestino = e.target.getAttribute('data-to');
             
-            document.querySelectorAll('.scene').forEach(sc => sc.classList.remove('active'));
-            document.getElementById(idDestino).classList.add('active');
+            if (idDestino !== 'scene-1') {
+                document.body.classList.add('hide-ui');
+            } else {
+                document.body.classList.remove('hide-ui');
+            }
 
             if (idDestino === 'scene-3') {
-                console.log("Inventario actual:", jugador.inventario);
+                jugador.vidaActual = jugador.obtenerVidaTotal(); 
+                pintarInventario();
             }
-
-            if (idDestino === 'scene-4') {
-                pintarEnemigos();
-            }
-
+            if (idDestino === 'scene-4') pintarEnemigos();
             if (idDestino === 'scene-5') {
-                prepararBatalla();
+                mostrarEscena(idDestino);
+                setTimeout(() => prepararBatalla(), 50);
+                return;
             }
+
+            mostrarEscena(idDestino);
         });
     });
+}
+
+function configurarBotonBatalla() {
+    const btnNext = document.getElementById('btn-next-battle');
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            indiceBatalla++;
+            prepararBatalla();
+        });
+    }
+}
+
+function mostrarEscena(id) {
+    document.querySelectorAll('.scene').forEach(sc => sc.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
 function prepararBatalla() {
@@ -149,58 +221,63 @@ function prepararBatalla() {
         finJuego();
         return;
     }
-
+    
     const enemigo = enemigos[indiceBatalla];
     const arena = document.querySelector('.battle-arena');
     const resultadoTexto = document.getElementById('battle-result');
     const btnNext = document.getElementById('btn-next-battle');
 
-    btnNext.style.display = 'none';
-    resultadoTexto.innerHTML = '¡Luchando...!';
+    btnNext.classList.add('hidden');
+    resultadoTexto.innerHTML = '¡Combatiendo!';
+    
+    arena.classList.add('start-anim');
 
     arena.innerHTML = `
         <div class="lado-jugador">
+            <img src="${jugador.avatar}" class="fighter-img" alt="Tú"> 
             <h3>${jugador.nombre}</h3>
             <p>HP: ${jugador.vidaActual}</p>
         </div>
         <div class="lado-enemigo">
+            <img src="${enemigo.imagen}" class="fighter-img" alt="Enemigo"> 
             <h3>${enemigo.nombre}</h3>
             <p>HP: ${enemigo.vida}</p>
-            <p><small>ATQ: ${enemigo instanceof Jefe ? (enemigo.ataque * enemigo.multiplicador).toFixed(0) : enemigo.ataque}</small></p>
         </div>
     `;
+
+    void arena.offsetWidth;
+
+    setTimeout(() => {
+        arena.classList.remove('start-anim');
+    }, 50);
 
     setTimeout(() => {
         const resultado = combatir(jugador, enemigo);
         
         if (resultado.ganador === jugador) {
             jugador.sumarPuntos(resultado.puntos);
-            resultadoTexto.innerHTML = `<span style="color:green">¡Victoria! +${resultado.puntos} pts</span>`;
+            resultadoTexto.innerHTML = `<span class="result-victory">¡Victoria! +${resultado.puntos} pts</span>`;
         } else {
-            resultadoTexto.innerHTML = `<span style="color:red">Derrota... Te has quedado sin fuerzas.</span>`;
+            resultadoTexto.innerHTML = `<span class="result-defeat">Derrota... (HP: 0)</span>`;
         }
-
-        arena.querySelector('.lado-jugador p').innerText = `HP: ${jugador.vidaActual}`;
-
-        btnNext.style.display = 'block';
-
-        btnNext.onclick = () => {
-            indiceBatalla++;
-
-            const s5 = document.getElementById('scene-5');
-            s5.classList.remove('active');
-            void s5.offsetWidth;
-            s5.classList.add('active');
-            
-            prepararBatalla();
-        };
-
-    }, 1000);
+        
+        const hpText = arena.querySelector('.lado-jugador p');
+        if(hpText) hpText.innerText = `HP: ${jugador.vidaActual}`;
+        
+        btnNext.classList.remove('hidden');
+        
+    }, 1500);
 }
 
 function finJuego() {
-    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
-    document.getElementById('scene-6').classList.add('active');
+    mostrarEscena('scene-6');
+    const rango = obtenerRango(jugador.puntos);
+    document.getElementById('final-rank').innerHTML = `
+        Rango: <strong class="rank-text">${rango}</strong>
+        <br>Puntos: ${jugador.puntos}
+    `;
 
-    document.getElementById('final-rank').innerText = `Puntos Finales: ${jugador.puntos}`;
+    if (window.confetti) {
+        window.confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    }
 }

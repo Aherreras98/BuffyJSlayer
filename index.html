@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aventura en Sunnydale</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script type="module" src="src/modules/main.js" defer></script>
 </head>
+
 <body>
     <header>
         <h1>Buffy: The JS Slayer</h1>
@@ -20,15 +23,24 @@
 
         <section id="scene-2" class="scene">
             <h2>The Magic Box</h2>
+
             <div id="market-grid" class="grid-container"></div>
+
+            <div class="inventory-container">
+                <h3>Inventario:</h3>
+                <div id="inventory-grid" class="inventory-grid"></div>
+            </div>
+
             <button class="btn-next" data-to="scene-3">Revisar Equipo</button>
         </section>
 
         <section id="scene-3" class="scene">
             <h2>Inventario de Caza</h2>
-            <div id="inventory-grid" class="grid-container"></div>
+            <div id="full-inventory-grid" class="grid-container"></div>
+
             <div class="stats-summary">
                 <p>Ataque: <span id="final-atk">0</span> | Defensa: <span id="final-def">0</span></p>
+                <p>Vida Total: <span id="final-hp">100</span></p>
             </div>
             <button class="btn-next" data-to="scene-4">Buscar Demonios</button>
         </section>
@@ -39,24 +51,24 @@
             <button class="btn-next" data-to="scene-5">¡A Pelear!</button>
         </section>
 
-        <section id="scene-5" class="scene battle-scene">
+<section id="scene-5" class="scene battle-scene">
             <h2>Combate</h2>
             <div class="battle-arena">
-                </div>
+            </div>
             <h3 id="battle-result"></h3>
-            <button id="btn-next-battle" style="display:none;">Siguiente Enemigo</button>
+            <button id="btn-next-battle" class="btn-next hidden">Siguiente Enemigo</button>
         </section>
 
         <section id="scene-6" class="scene">
             <h2>Fin de la Patrulla</h2>
             <h1 id="final-rank">...</h1>
-            <button onclick="location.reload()">Reiniciar Noche</button>
+            <button id="btn-end" onclick="location.reload()">Reiniciar Noche</button>
         </section>
     </main>
 
     <footer>
-        <p>Adrián Herrera Sosa</p>
+        <p>Adrián Herrera</p>
     </footer>
-
 </body>
+
 </html>

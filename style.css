@@ -11,64 +11,446 @@ body {
     color: var(--color-text);
     font-family: var(--font-base);
     margin: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
+*::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+
+/* HEADER Y FOOTER */
 header, footer {
     text-align: center;
-    padding: 1rem;
-    background: rgba(0,0,0,0.3);
+    padding: 1vh 0;
+    background: rgba(0,0,0,0.8);
+    border-bottom: 2px solid var(--color-primary);
+    flex-shrink: 0;
+    height: 8vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
 }
+
+body.hide-ui header, 
+body.hide-ui footer {
+    display: none !important;
+}
+
+h1 { margin: 0; font-size: 3vh; text-transform: uppercase; }
+footer p { margin: 0; font-size: 1.5vh; }
 
 main {
     flex: 1;
-    padding: 20px;
-    max-width: 1024px;
-    margin: 0 auto;
+    padding: 2vh 2vw;
     width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
 .scene {
     display: none;
-    animation: fadeIn 0.5s;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.scene.active {
+.scene.active { display: flex; }
+
+/* --- ESTILOS PERFIL --- */
+.card .profile-avatar {
+    width: clamp(130px, 35vw, 300px);
+    height: auto;
+    aspect-ratio: 1 / 1; 
+    max-height: none; 
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #d4af37; 
+    margin-bottom: 15px;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+.profile-name {
+    font-size: 2rem;
+    margin: 0 0 15px 0;
+    color: #d4af37;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px #000;
+    text-align: center;
+}
+
+#player-info-card {
+    width: 100%; 
+    max-width: 400px;
+    background: rgba(0,0,0,0.6);
+    padding: 20px;
+    border: 2px solid var(--color-accent);
+    box-sizing: border-box;
+}
+
+.stats-grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr; 
+    gap: 10px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.stat-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.stat-box:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    border-color: #d4af37;
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
     display: block;
 }
 
-.grid-container {
-    display: grid;
-    gap: 15px;
-    padding: 10px;
-    grid-template-columns: 1fr;
+.stat-value {
+    margin: 0;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #eee;
 }
 
-@media (min-width: 720px) {
+h2 { 
+    font-size: 3vh; 
+    margin: 0 0 1vh 0; 
+    color: var(--color-accent);
+    flex-shrink: 0;
+    text-shadow: 2px 2px 4px #000;
+    background: rgba(0,0,0,0.6);
+    padding: 5px 15px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* --- FONDOS --- */
+#scene-1 {
+    background-image: url('src/img/casa.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#scene-2, #scene-3 {
+    background-image: url('src/img/magicbox.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#scene-4, #scene-5 {
+    background-image: url('src/img/cementerio.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#scene-6 {
+    background-image: url('src/img/sunnydale.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* --- GRID BASE --- */
+.grid-container {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    padding: 0 5px;
+    height: 60vh;
+    overflow-y: auto; 
+    flex-shrink: 1;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    align-content: start; 
+    box-sizing: border-box;
+}
+
+/* --- TARJETAS --- */
+.card {
+    background-color: rgba(40, 40, 40, 0.95);
+    border: 1px solid #555;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 220px; 
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px var(--color-primary);
+    border-color: var(--color-primary);
+    z-index: 10;
+}
+
+.card.bought {
+    background-color: rgba(30, 60, 30, 0.95);
+    border-color: var(--color-accent);
+}
+
+.card.is-boss {
+    border: 3px solid var(--color-accent);
+}
+
+.boss-label {
+    color: var(--color-accent);
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+}
+
+.card img {
+    width: auto;
+    height: 10vh;
+    max-height: 100px;
+    object-fit: contain;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.card h3 { 
+    margin: 5px 0; 
+    font-size: 1rem;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    color: #fff; 
+}
+
+.card p { 
+    display: block; 
+    margin: 0; 
+    font-size: 0.8rem; 
+    color: #ccc; 
+}
+
+.price { 
+    font-size: 1rem !important; 
+    color: #d4af37 !important; 
+    font-weight: bold; 
+    margin: 5px 0 !important; 
+}
+
+.card button {
+    padding: 5px 0;
+    font-size: 0.9rem;
+    margin-top: auto;
+    width: 100%;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.card button:hover {
+    transform: scale(1.05);
+}
+
+.inventory-container {
+    margin-top: 1vh;
+    background: rgba(0,0,0,0.8);
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #555;
+    width: 100%;
+    min-height: 12vh;
+    flex-shrink: 0; 
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.inventory-container h3 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    color: #ccc;
+}
+
+.inventory-grid {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+}
+
+.inventory-slot {
+    width: 13vw; 
+    height: 13vw;
+    min-width: 40px; 
+    min-height: 40px;
+    max-width: 70px;
+    max-height: 70px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 2px dashed #666;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+}
+
+.inventory-slot:hover {
+    transform: scale(1.1);
+}
+
+.inventory-slot.filled {
+    border: 2px solid #d4af37;
+    background-color: #222;
+    animation: popIn 0.3s;
+}
+
+.inventory-slot img { width: 90%; height: 90%; object-fit: contain; }
+
+/* BOTONES GLOBALES */
+.btn-next, #btn-next-battle, #btn-end {
+    margin-top: 1vh;
+    padding: 0 3vw;
+    font-size: 1rem;
+    height: 50px; 
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    transition: transform 0.2s;
+}
+
+.btn-next:hover, #btn-next-battle:hover, #btn-end:hover {
+    transform: scale(1.05);
+}
+
+.hidden { display: none !important; }
+
+/* --- BATALLA --- */
+.battle-arena {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+}
+
+.lado-jugador, .lado-enemigo {
+    width: 45%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.fighter-img {
+    width: 100%;
+    height: auto;
+    max-height: 45vh; 
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+    margin-bottom: 1vh;
+}
+
+.battle-arena h3 { font-size: 1.5rem; margin: 0; text-shadow: 2px 2px 4px #000; text-align: center; }
+.battle-arena p { font-size: 1.2rem; margin: 0; text-shadow: 2px 2px 4px #000; }
+
+.battle-arena.start-anim .lado-jugador { transform: translateX(200%); }
+.battle-arena.start-anim .lado-enemigo { transform: translateX(-200%); }
+.lado-jugador, .lado-enemigo { transform: translateX(0); }
+
+.result-victory { color: #4caf50; font-size: 1.5em; text-shadow: 1px 1px 2px #000; text-align: center; display: block;}
+.result-defeat { color: #ff4444; font-size: 1.5em; text-shadow: 1px 1px 2px #000; text-align: center; display: block;}
+.rank-text { color: var(--color-accent); }
+
+@keyframes flashVerde {
+    0% { transform: scale(1); }
+    50% { background-color: #d4af37; transform: scale(1.05); }
+    100% { background-color: #2e4a2e; transform: scale(1); }
+}
+.btn-animado { animation: flashVerde 0.5s ease-out; }
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 600px) {
     .grid-container {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr 1fr; 
+        gap: 8px;
     }
+    
+    .card { min-height: 190px; padding: 8px; }
+    .card h3 { font-size: 0.85rem; }
+    .price { font-size: 0.9rem !important; }
+    
+    .profile-name { font-size: 1.5rem; }
+    .stat-value { font-size: 0.8rem; }
+    
+    .fighter-img { max-height: 35vh; }
+    .battle-arena h3 { font-size: 1.1rem; }
+    .battle-arena p { font-size: 1rem; }
+    
+    .btn-next { width: 100%; }
+}
+
+@media (min-width: 601px) and (max-width: 1023px) {
+    .grid-container {
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 12px;
+    }
+    
+    .card h3 { font-size: 0.95rem; }
 }
 
 @media (min-width: 1024px) {
     .grid-container {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(5, 1fr); 
+        gap: 15px;
     }
-}
-
-button {
-    background-color: var(--color-primary);
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    
+    main { max-width: 1400px; }
 }

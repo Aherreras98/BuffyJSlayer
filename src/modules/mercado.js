@@ -6,13 +6,14 @@ export class Mercado {
         this.productos = [
             new Producto('Estaca', 'src/img/estaca.png', 5000, RAREZA.COMUN, TIPO.ARMA, 10),
             new Producto('Ballesta', 'src/img/ballesta.png', 12000, RAREZA.RARA, TIPO.ARMA, 25),
-            new Producto('Hacha', 'src/img/hacha.png', 42000, RAREZA.LEGENDARIA, TIPO.ARMA, 45),
+            new Producto('Hacha', 'src/img/hacha.png', 15000, RAREZA.RARA, TIPO.ARMA, 30),
+            new Producto('Guadaña', 'src/img/guadaña.png', 25000, RAREZA.LEGENDARIA, TIPO.ARMA, 60),
             new Producto('Chaqueta', 'src/img/chaqueta.png', 8000, RAREZA.COMUN, TIPO.ARMADURA, 15),
-            new Producto('Armadura', 'src/img/armadura.png', 12000, RAREZA.RARA, TIPO.ARMADURA, 20),
+            new Producto('Chaqueta Reforzada', 'src/img/armadura.png', 12000, RAREZA.RARA, TIPO.ARMADURA, 20),
             new Producto('Amuleto', 'src/img/amuleto.png', 15000, RAREZA.LEGENDARIA, TIPO.ARMADURA, 30),
             new Producto('Vendas', 'src/img/vendas.png', 4000, RAREZA.COMUN, TIPO.CONSUMIBLE, 20),
             new Producto('Agua Bendita', 'src/img/agua.png', 9000, RAREZA.RARA, TIPO.CONSUMIBLE, 35),
-            new Producto('Sangre de Campeón', 'src/img/sangre.png', 18000, RAREZA.LEGENDARIA, TIPO.CONSUMIBLE, 55)
+            new Producto('Sangre', 'src/img/sangre.png', 18000, RAREZA.LEGENDARIA, TIPO.CONSUMIBLE, 55)
         ];
     }
 
