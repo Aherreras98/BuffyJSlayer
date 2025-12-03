@@ -14,21 +14,27 @@ export function combatir(jugador, enemigo) {
     let vidaEnemigo = enemigo.vida;
     const defensaJugador = jugador.obtenerDefensaTotal();
     const ataqueJugador = jugador.obtenerAtaqueTotal();
-
     let ataqueEnemigo = enemigo.ataque;
 
     if (enemigo instanceof Jefe) {
         ataqueEnemigo = ataqueEnemigo * enemigo.multiplicador;
     }
 
+    let turnos = 0;
+    const MAX_TURNOS = 1000; 
+
     while (jugador.vidaActual > 0 && vidaEnemigo > 0) {
+        turnos++;
+        if (turnos > MAX_TURNOS) break;
 
         let danoRecibido = ataqueEnemigo - defensaJugador;
         if (danoRecibido < 0) danoRecibido = 0;
 
         jugador.vidaActual -= danoRecibido;
 
-        vidaEnemigo -= ataqueJugador;
+        if (jugador.vidaActual > 0) {
+            vidaEnemigo -= ataqueJugador;
+        }
     }
 
     const victoria = jugador.vidaActual > 0;
