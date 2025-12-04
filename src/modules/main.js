@@ -5,7 +5,7 @@ import { RAREZA } from '../../constants.js';
 import { combatir } from './batalla.js';
 import { obtenerRango } from './ranking.js';
 
-const jugador = new Jugador("Buffy", "src/img/buffy.png");
+const jugador = new Jugador(`Buffy`, "src/img/buffy.png");
 
 const mercado = new Mercado();
 
@@ -26,11 +26,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const azar = rarezas[Math.floor(Math.random() * rarezas.length)];
     mercado.aplicarOferta(azar, 20); 
 
+    crearPersonaje();
     actualizarPerfil();
     pintarMercado();
     configurarNavegacion();
     configurarBotonBatalla(); 
 });
+
+function crearPersonaje() {
+    const container = document.querySelector('#scene-0');
+    let form = document.getElementById('player-form');
+
+    if (!form) {
+        form = document.createElement('div');
+        form.id = 'player-form';
+        form.className = 'card';
+        container.insertBefore(form, container.querySelector('.btn-next'));
+    }
+
+    form.innerHTML = `<form class="form-container" id="login-form">
+            <div class="form">
+                <label for="nickname">Nombre del personaje: </label>
+                <input type="text" id="nickname" required>
+            </div>
+            <div class="form">
+                <label for="atk">Ataque: </label>
+                <input type="number" min="0" step="1" id="atk" required>
+            </div>
+            <div class="form">
+                <label for="def">Defensa: </label>
+                <input type="number" min="0" step="1" id="def" required>
+            </div>
+            <div class="form">
+                <label for="hp">Vida: </label>
+                <input type="number" min="100" step="1" id="hp" required>
+            </div>
+        </form>`
+}
 
 /**
  * Actualiza la interfaz del perfil del jugador (Escena 1).
@@ -104,7 +136,12 @@ function pintarMercado() {
                     alert("¡Mochila llena! Máximo 5 objetos.");
                     return;
                 }
+                if (jugador.dinero < prod.precio){
+                    alert("No tienes suficiente dinero")
+                    return;
+                }
                 jugador.anadirItem(prod);
+                jugador.dinero -= prod.precio;
                 btn.classList.add('btn-animado');
                 setTimeout(() => btn.classList.remove('btn-animado'), 500);
                 
@@ -116,6 +153,7 @@ function pintarMercado() {
                     jugador.inventario.splice(index, 1);
                 }
                 card.classList.remove('bought');
+                jugador.dinero += prod.precio;
                 btn.textContent = "Añadir";
             }
             actualizarInventario();
@@ -132,7 +170,7 @@ function pintarMercado() {
 function actualizarInventario() {
     const container = document.getElementById('inventory-grid');
     if (!container) return;
-    container.innerHTML = '';
+    container.innerHTML = `Dinero: ${jugador.dinero/100}`;
 
     for (let i = 0; i < 5; i++) {
         const slot = document.createElement('div');
@@ -287,6 +325,7 @@ function prepararBatalla() {
             <img src="${jugador.avatar}" class="fighter-img" alt="Tú"> 
             <h3>${jugador.nombre}</h3>
             <p>HP: ${jugador.vidaActual}</p>
+            <p>Dinero: ${jugador.dinero/100}</p>
         </div>
         <div class="lado-enemigo">
             <img src="${enemigo.imagen}" class="fighter-img" alt="Enemigo"> 
@@ -329,10 +368,17 @@ function finJuego() {
     const rango = obtenerRango(jugador.puntos);
     document.getElementById('final-rank').innerHTML = `
         Rango: <strong class="rank-text">${rango}</strong>
-        <br>Puntos: ${jugador.puntos}
+        <br>Puntos: ${jugador.puntos + jugador.dinero/100}<br>
+        Puntos = Puntos base: ${jugador.puntos} + el dinero del jugador: ${jugador.dinero/100} <br>
+        <button id="btn-end" onclick="console.log(localStorage)">Ver Registro</button>
     `;
 
     if (window.confetti) {
         window.confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     }
+
 }
+
+localStorage.setItem("nombre", jugador.nombre)
+localStorage.setItem("dinero", jugador.dinero)
+localStorage.setItem("puntos", jugador.puntos)

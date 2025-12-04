@@ -1,4 +1,5 @@
 import { Jefe } from './enemigo.js';
+import { Jugador } from './jugador.js';
 
 /**
  * Función combate.
@@ -45,8 +46,10 @@ export function combatir(jugador, enemigo) {
 
         if (enemigo instanceof Jefe) {
             puntosGanados = Math.round(basePuntos * enemigo.multiplicador);
+            jugador.dinero = jugador.dinero + 1000;
         } else {
             puntosGanados = Math.round(basePuntos);
+            jugador.dinero = jugador.dinero + 500;
         }
     } else {
         jugador.vidaActual = 0;
@@ -56,4 +59,5 @@ export function combatir(jugador, enemigo) {
         ganador: victoria ? jugador : enemigo,
         puntos: puntosGanados
     };
+    
 }

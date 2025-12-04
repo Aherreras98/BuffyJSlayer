@@ -15,6 +15,7 @@ export class Jugador {
         this.inventario = [];
         this.vidaBase = 100;
         this.vidaActual = 100;
+        this.dinero = 50000;
     }
 
     /**
@@ -64,4 +65,9 @@ export class Jugador {
             .reduce((total, item) => total + item.bonus, 0);
         return this.vidaBase + bonus;
     }
+
+        obtenerPrecioFormateado() {
+            return formatearPrecio(this.dinero);
+        }
+
 }
